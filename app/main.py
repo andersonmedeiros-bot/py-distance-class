@@ -1,6 +1,7 @@
 from __future__ import annotations
+from functools import total_ordering
 
-
+@total_ordering
 class Distance:
     def __init__(self, km: int | float) -> None:
         self.km = km
@@ -16,12 +17,15 @@ class Distance:
             return Distance(self.km + other.km)
         return Distance(self.km + other)
 
-    def __iadd__(self, other: Distance | int | float) -> Distance:
-        if isinstance(other, Distance):
-            self.km += other.km
-        else:
-            self.km += other
-        return self
+    def __mul__(self, other: int | float) -> Distance:
+        if isinstance(other, (int, float)):
+            return Distance(self.km * other)
+        return NotImplemented
+
+    def __truediv__(self, other: int | float) -> Distance:
+        if isinstance(other, (int, float)):
+            return Distance(round(self.km / other, 2))
+        return NotImplemented
 
     def __lt__(self, other: Distance | int | float) -> bool:
         if isinstance(other, Distance):
@@ -34,12 +38,3 @@ class Distance:
         if isinstance(other, (int, float)):
             return self.km == other
         return False
-
-    def __mul__(self, other: int | float) -> Distance:
-        if isinstance(other, (int, float)):
-            return Distance(self.km * other)
-
-    def __truediv__(self, other: int | float) -> Distance:
-        if isinstance(other, (int, float)):
-            return Distance(round(self.km / other, 2))
-        return NotImplemented
